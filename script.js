@@ -1,11 +1,13 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d"); 
-var slider = document.getElementById("circleMover")
 
+const radio = 45;
 
-function drawCircle(x) {
+var petals = 6;
+
+function drawCircle(x, y) {
     ctx.beginPath(); 
-    ctx.arc(95 + x, 50, 40, 0, 2 * Math.PI); 
+    ctx.arc(x, y, radio, 0, 2 * Math.PI); 
     ctx.stroke(); 
 }
 
@@ -13,10 +15,14 @@ function clearCanvas(){
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 }
 
-drawCircle(0);
+drawCircle(200, 100);
 
-slider.addEventListener("click", () => {
-    clearCanvas()
-    var sliderValue = parseInt(slider.value)
-    drawCircle(sliderValue)
-})
+function rosette(circleX, circleY, currentPetal) {
+    pointX = radio * Math.cos((radio * currentPetal)) + circleX;
+    pointY = radio * Math.sin((radio * currentPetal)) + circleY; 
+}
+
+for (let i = 0; i < petals; i++) {
+    rosette(200, 100, i);
+    drawCircle(pointX, pointY);
+}
