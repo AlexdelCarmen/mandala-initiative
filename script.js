@@ -23,11 +23,11 @@ function drawLine(x1, y1, x2, y2) {
 function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
-const capas = [{ radio: 250, repeticiones: 8 }];
+const capas = [{ radio: 250, repeticiones: Math.floor(Math.random() * 5) + 5 }];
 
 function drawMandala(cx, cy) {
   for (let i = 1; i <= layers; i++) {
-    var radio = Math.floor(Math.random() * 201) + 50; // Radio aleatorio entre 50 y 250
+    var radio = Math.floor(Math.random() * 5) * 50; // Radio aleatorio entre 50 y 250
     var repeticiones = Math.floor(Math.random() * 12) + 6; // Repeticiones aleatorias entre 6 y 18
     capas.push({ radio: radio, repeticiones: repeticiones });
   }
