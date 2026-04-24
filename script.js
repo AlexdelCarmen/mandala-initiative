@@ -1,6 +1,7 @@
-var canvas = document.getElementById("canvas");
-var ctx = canvas.getContext("2d");
-let layers = 4;
+let canvas = document.getElementById("canvas");
+let ctx = canvas.getContext("2d");
+let layers;
+const button = document.getElementById("generate");
 
 startingPointX = canvas.width / 2;
 startingPointY = canvas.height / 2;
@@ -21,7 +22,8 @@ function drawLine(x1, y1, x2, y2) {
 }
 
 function clearCanvas() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.reset();
+  canvas.width = canvas.width; // Esto limpia el canvas
 }
 const capas = [{ radio: 250, repeticiones: Math.floor(Math.random() * 5) + 5 }];
 
@@ -44,3 +46,9 @@ function drawMandala(cx, cy) {
 }
 
 drawMandala(startingPointX, startingPointY);
+
+button.addEventListener("click", () => {
+  layers = Math.floor(Math.random() * 5) + 3; // Número aleatorio de capas entre 3 y 7// Limpiar el canvas antes de dibujar el nuevo mandala
+  clearCanvas();
+  drawMandala(startingPointX, startingPointY);
+});
