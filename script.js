@@ -2,15 +2,16 @@ let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
 let layers;
 const button = document.getElementById("generate");
+const clearButton = document.getElementById("clear");
 
 startingPointX = canvas.width / 2;
 startingPointY = canvas.height / 2;
 
-const radio = 45;
+const ratio = 45;
 
-function drawCircle(x, y) {
+function drawCircle(x, y, ratio) {
   ctx.beginPath();
-  ctx.arc(x, y, radio, 0, 2 * Math.PI);
+  ctx.arc(x, y, ratio, 0, 2 * Math.PI);
   ctx.stroke();
 }
 
@@ -22,12 +23,14 @@ function drawLine(x1, y1, x2, y2) {
 }
 
 function clearCanvas() {
-  ctx.reset();
-  canvas.width = canvas.width; // Esto limpia el canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // limpiando el canvas
 }
-const capas = [{ radio: 250, repeticiones: Math.floor(Math.random() * 5) + 5 }];
 
 function drawMandala(cx, cy) {
+  const capas = [
+    { radio: 250, repeticiones: Math.floor(Math.random() * 5) + 8 },
+  ];
+
   for (let i = 1; i <= layers; i++) {
     var radio = Math.floor(Math.random() * 5) * 50; // Radio aleatorio entre 50 y 250
     var repeticiones = Math.floor(Math.random() * 11) + 8; // Repeticiones aleatorias entre 6 y 18
@@ -35,20 +38,26 @@ function drawMandala(cx, cy) {
   }
 
   for (const capa of capas) {
+    const puntos = [];
+
     for (let i = 0; i < capa.repeticiones; i++) {
       const angulo = ((2 * Math.PI) / capa.repeticiones) * i;
       const x = cx + capa.radio * Math.cos(angulo);
       const y = cy + capa.radio * Math.sin(angulo);
-      drawLine(cx, cy, x, y);
-      drawCircle(x, y);
+      puntos.push({ x, y });
+      drawCircle(x, y, ratio + (capa.radio / 10) * Math.random()); // Dibujar un círculo con un radio ligeramente aleatorio para cada punto
+    }
+
+    for (let i = 0; i < puntos.length; i++) {
+      const actual = puntos[i];
+      const siguiente = puntos[(i + 1) % puntos.length];
+      drawLine(actual.x, actual.y, siguiente.x, siguiente.y);
     }
   }
 }
 
-drawMandala(startingPointX, startingPointY);
-
 button.addEventListener("click", () => {
+  clearCanvas(); // Limpiar el canvas antes de dibujar el nuevo mandala
   layers = Math.floor(Math.random() * 5) + 3; // Número aleatorio de capas entre 3 y 7// Limpiar el canvas antes de dibujar el nuevo mandala
-  clearCanvas();
   drawMandala(startingPointX, startingPointY);
 });
