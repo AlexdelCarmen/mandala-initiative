@@ -1,6 +1,6 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
-var layers = 4;
+let layers = 4;
 
 startingPointX = canvas.width / 2;
 startingPointY = canvas.height / 2;
@@ -28,7 +28,7 @@ const capas = [{ radio: 250, repeticiones: Math.floor(Math.random() * 5) + 5 }];
 function drawMandala(cx, cy) {
   for (let i = 1; i <= layers; i++) {
     var radio = Math.floor(Math.random() * 5) * 50; // Radio aleatorio entre 50 y 250
-    var repeticiones = Math.floor(Math.random() * 12) + 6; // Repeticiones aleatorias entre 6 y 18
+    var repeticiones = Math.floor(Math.random() * 11) + 8; // Repeticiones aleatorias entre 6 y 18
     capas.push({ radio: radio, repeticiones: repeticiones });
   }
 
