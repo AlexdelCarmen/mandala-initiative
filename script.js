@@ -2,17 +2,16 @@ let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
 let layers;
 const button = document.getElementById("generate");
-const clearButton = document.getElementById("clear");
+const exportButton = document.getElementById("export");
 
 startingPointX = canvas.width / 2;
 startingPointY = canvas.height / 2;
 
 const ratio = 45;
 
-function drawLine(x1, y1, x2, y2) {
+function circleCenter(x, y) {
   ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x2, y2);
+  ctx.arc(x, y, ratio, 0, 2 * Math.PI);
   ctx.stroke();
 }
 
@@ -21,6 +20,10 @@ function clearCanvas() {
 }
 
 function drawMandala(cx, cy) {
+  ctx.fillStyle = "white";
+  ctx.fillRect(0, 0, canvas.width, canvas.height); // Fondo blanco para el mandala
+  circleCenter(startingPointX, startingPointY); // Dibuja el círculo central del mandala
+
   const capas = [];
 
   let radioActual = 50;
@@ -74,4 +77,11 @@ button.addEventListener("click", () => {
   clearCanvas(); // Limpiar el canvas antes de dibujar el nuevo mandala
   layers = Math.floor(Math.random() * 3) + 3; // Número aleatorio de capas entre 6 y 12
   drawMandala(startingPointX, startingPointY);
+});
+
+exportButton.addEventListener("click", () => {
+  const link = document.createElement("a");
+  link.download = "mandala.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
 });
