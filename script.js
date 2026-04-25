@@ -27,25 +27,29 @@ function clearCanvas() {
 }
 
 function drawMandala(cx, cy) {
-  const capas = [
-    { radio: 250, repeticiones: Math.floor(Math.random() * 5) + 8 },
-  ];
+  const capas = [];
 
+  let radioActual = 50;
   for (let i = 1; i <= layers; i++) {
-    var radio = Math.floor(Math.random() * 5) * 50; // Radio aleatorio entre 50 y 250
-    var repeticiones = Math.floor(Math.random() * 11) + 8; // Repeticiones aleatorias entre 6 y 18
-    capas.push({ radio: radio, repeticiones: repeticiones });
+    radioActual += Math.floor(Math.random() * 40) + 40; // Incremento aleatorio entre 40 y 80
+    capas.push({
+      radio: radioActual,
+      repeticiones: Math.floor(Math.random() * 4) * 2 + 6, // 6, 8, 10 o 12 repeticiones
+    });
   }
+
+  capas.sort((a, b) => a.radio - b.radio);
 
   for (const capa of capas) {
     const puntos = [];
 
     for (let i = 0; i < capa.repeticiones; i++) {
-      const angulo = ((2 * Math.PI) / capa.repeticiones) * i;
+      const anguloBase = -Math.PI / 2; // Comenzar desde la parte superior
+      const angulo = anguloBase + ((2 * Math.PI) / capa.repeticiones) * i;
       const x = cx + capa.radio * Math.cos(angulo);
       const y = cy + capa.radio * Math.sin(angulo);
       puntos.push({ x, y });
-      drawCircle(x, y, ratio + (capa.radio / 10) * Math.random()); // Dibujar un círculo con un radio ligeramente aleatorio para cada punto
+      drawCircle(x, y, 12 + (capa.radio / 25) * Math.random()); // Dibujar un círculo con un radio ligeramente aleatorio para cada punto
     }
 
     for (let i = 0; i < puntos.length; i++) {
@@ -58,6 +62,6 @@ function drawMandala(cx, cy) {
 
 button.addEventListener("click", () => {
   clearCanvas(); // Limpiar el canvas antes de dibujar el nuevo mandala
-  layers = Math.floor(Math.random() * 5) + 3; // Número aleatorio de capas entre 3 y 7// Limpiar el canvas antes de dibujar el nuevo mandala
+  layers = Math.floor(Math.random() * 3) + 3; // Número aleatorio de capas entre 6 y 12
   drawMandala(startingPointX, startingPointY);
 });
