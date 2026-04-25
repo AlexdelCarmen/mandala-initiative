@@ -55,7 +55,24 @@ function drawMandala(cx, cy) {
     for (let i = 0; i < puntos.length; i++) {
       const actual = puntos[i];
       const siguiente = puntos[(i + 1) % puntos.length];
-      drawLine(actual.x, actual.y, siguiente.x, siguiente.y);
+      for (let i = 0; i < puntos.length; i++) {
+        const actual = puntos[i];
+        const siguiente = puntos[(i + 1) % puntos.length];
+
+        //punto medio entre actual y siguiente
+        const mx = (actual.x + siguiente.x) / 2;
+        const my = (actual.y + siguiente.y) / 2;
+
+        //punto de control: empuja el medio hacia afuera del centro del mandala
+        const tension = 0.4; // graduar entre 0.4 y 0.6 para más o menos curvatura
+        const cpx = mx + (mx - cx) * tension;
+        const cpy = my + (my - cy) * tension;
+
+        ctx.beginPath();
+        ctx.moveTo(actual.x, actual.y);
+        ctx.quadraticCurveTo(cpx, cpy, siguiente.x, siguiente.y);
+        ctx.stroke();
+      }
     }
   }
 }
