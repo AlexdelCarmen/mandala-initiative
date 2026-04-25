@@ -9,12 +9,6 @@ startingPointY = canvas.height / 2;
 
 const ratio = 45;
 
-function drawCircle(x, y, ratio) {
-  ctx.beginPath();
-  ctx.arc(x, y, ratio, 0, 2 * Math.PI);
-  ctx.stroke();
-}
-
 function drawLine(x1, y1, x2, y2) {
   ctx.beginPath();
   ctx.moveTo(x1, y1);
@@ -35,6 +29,7 @@ function drawMandala(cx, cy) {
     capas.push({
       radio: radioActual,
       repeticiones: Math.floor(Math.random() * 4) * 2 + 6, // 6, 8, 10 o 12 repeticiones
+      tension: Math.random() * 0.2 + 0.4, // Tensión aleatoria entre 0.4 y 0.6
     });
   }
 
@@ -49,7 +44,6 @@ function drawMandala(cx, cy) {
       const x = cx + capa.radio * Math.cos(angulo);
       const y = cy + capa.radio * Math.sin(angulo);
       puntos.push({ x, y });
-      drawCircle(x, y, 12 + (capa.radio / 25) * Math.random()); // Dibujar un círculo con un radio ligeramente aleatorio para cada punto
     }
 
     for (let i = 0; i < puntos.length; i++) {
@@ -64,9 +58,8 @@ function drawMandala(cx, cy) {
         const my = (actual.y + siguiente.y) / 2;
 
         //punto de control: empuja el medio hacia afuera del centro del mandala
-        const tension = 0.4; // graduar entre 0.4 y 0.6 para más o menos curvatura
-        const cpx = mx + (mx - cx) * tension;
-        const cpy = my + (my - cy) * tension;
+        const cpx = mx + (mx - cx) * capa.tension;
+        const cpy = my + (my - cy) * capa.tension;
 
         ctx.beginPath();
         ctx.moveTo(actual.x, actual.y);
