@@ -25,15 +25,17 @@ function drawMandala(cx, cy) {
 
   const capas = [
     {
-      radio: Math.floor(Math.random() * 20) + 20,
+      radio: Math.floor(Math.random() * 15) + 10,
       repeticiones: 6,
       tension: 1,
     },
   ]; // Capa inicial fija
 
-  let radioActual = 50;
+  let radioActual = 30;
+  const radioMaximo = 350;
   for (let i = 1; i <= layers; i++) {
     radioActual += Math.floor(Math.random() * 40) + 40; // Incremento aleatorio entre 40 y 80
+    if (radioActual > radioMaximo) break; // Detener si el radio supera el máximo permitido
     capas.push({
       radio: radioActual,
       repeticiones: Math.floor(Math.random() * 4) * 2 + 6, // 6, 8, 10 o 12 repeticiones
