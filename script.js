@@ -71,7 +71,7 @@ function drawMandala(cx, cy) {
 
         ctx.beginPath();
         ctx.moveTo(actual.x, actual.y);
-        ctx.
+        ctx.lineWidth = 0.5 + capa.radio / 200; // Grosor basado en el radio de la capa
         ctx.quadraticCurveTo(cpx, cpy, siguiente.x, siguiente.y);
         ctx.stroke();
       }

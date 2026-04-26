@@ -1,0 +1,137 @@
+:root {
+  --color-bg: #f5efe6; /* papel envejecido */
+  --color-surface: #e8dcc8; /* madera clara */
+  --color-accent: #c4622d; /* terracota */
+  --color-accent-2: #4a9e8e; /* turquesa/verde azulado */
+  --color-text: #2c1f14; /* tinta oscura */
+  --color-text-soft: #6b4f3a; /* tinta suave */
+
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "Lora", Georgia, serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+}
+
+.app-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+header h1 {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  color: var(--color-accent);
+  letter-spacing: 0.05em;
+}
+
+header p {
+  font-size: 0.9rem;
+  color: var(--color-text-soft);
+  font-style: italic;
+  margin-top: 0.3rem;
+}
+
+main {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.canvas-panel {
+  flex: 1;
+  background: white;
+  border: 1px solid var(--color-surface);
+  border-radius: 4px;
+  box-shadow: 4px 4px 12px rgba(44, 31, 20, 0.15);
+}
+
+.canvas-panel canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.controls-panel {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.control-group {
+  background: var(--color-surface);
+  border-radius: 6px;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.control-group h2 {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-text-soft);
+  border-bottom: 1px solid var(--color-accent);
+  padding-bottom: 0.4rem;
+}
+
+button {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+#generate {
+  background: var(--color-accent);
+  color: var(--color-bg);
+  font-weight: 600;
+}
+
+#generate:hover {
+  background: #a8501f;
+}
+
+#export {
+  background: var(--color-accent-2);
+  color: var(--color-bg);
+}
+
+#export:hover {
+  background: #3a8070;
+}
+
+#export-pdf {
+  background: var(--color-surface);
+  color: var(--color-text-soft);
+  border: 1px solid var(--color-text-soft);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
