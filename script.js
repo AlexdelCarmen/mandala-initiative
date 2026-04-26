@@ -7,7 +7,7 @@ const exportButton = document.getElementById("export");
 startingPointX = canvas.width / 2;
 startingPointY = canvas.height / 2;
 
-const ratio = 45;
+const ratio = 25;
 
 function circleCenter(x, y) {
   ctx.beginPath();
@@ -22,9 +22,14 @@ function clearCanvas() {
 function drawMandala(cx, cy) {
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvas.width, canvas.height); // Fondo blanco para el mandala
-  circleCenter(startingPointX, startingPointY); // Dibuja el círculo central del mandala
 
-  const capas = [];
+  const capas = [
+    {
+      radio: Math.floor(Math.random() * 20) + 20,
+      repeticiones: 6,
+      tension: 1,
+    },
+  ]; // Capa inicial fija
 
   let radioActual = 50;
   for (let i = 1; i <= layers; i++) {
@@ -66,6 +71,7 @@ function drawMandala(cx, cy) {
 
         ctx.beginPath();
         ctx.moveTo(actual.x, actual.y);
+        ctx.
         ctx.quadraticCurveTo(cpx, cpy, siguiente.x, siguiente.y);
         ctx.stroke();
       }
