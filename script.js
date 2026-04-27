@@ -17,7 +17,12 @@ function circleCenter(x, y) {
 }
 
 function clearCanvas() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // limpiando el canvas
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0); // resetea cualquier transformación activa
+  ctx.fillStyle = "white";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.restore();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function drawMandala(cx, cy) {
@@ -40,7 +45,7 @@ function drawMandala(cx, cy) {
     capas.push({
       radio: radioActual,
       repeticiones: Math.floor(Math.random() * 4) * 2 + 6, // 6, 8, 10 o 12 repeticiones
-      tension: Math.random() * 0.2 + 0.4, // Tensión aleatoria entre 0.4 y 0.6
+      tension: Math.random() * 0.2 + 0.6, // Tensión aleatoria entre 0.6 y 0.8
     });
   }
 
@@ -84,7 +89,7 @@ function drawMandala(cx, cy) {
 
 button.addEventListener("click", () => {
   clearCanvas(); // Limpiar el canvas antes de dibujar el nuevo mandala
-  layers = Math.floor(Math.random() * 3) + 3; // Número aleatorio de capas entre 6 y 12
+  layers = Math.floor(Math.random() * 6) + 6; // Número aleatorio de capas entre 6 y 12
   drawMandala(canvas.width / 2, canvas.height / 2);
 });
 
@@ -103,13 +108,26 @@ exportPDF.addEventListener("click", () => {
     format: [8.5, 11], // tamaño carta
   });
 
-  const imgData = canvas.toDataURL("image/png");
-
   const margin = 0.75;
   const size = 8.5 - margin * 2;
   const xOffset = margin;
   const yOffset = (11 - size) / 2;
+  const totalPages = 10;
 
-  doc.addImage(imgData, "PNG", xOffset, yOffset, size, size);
+  for (let i = 0; i < totalPages; i++) {
+    // Reset completo del canvas
+    canvas.width = canvas.width; // esto resetea TODO el estado del canvas
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "#000000"; // fuerza el trazo a negro puro
+    layers = Math.floor(Math.random() * 6) + 6; // Número aleatorio de capas entre 6 y 12
+    drawMandala(canvas.width / 2, canvas.height / 2);
+
+    const imgData = canvas.toDataURL("image/png");
+
+    if (i > 0) doc.addPage();
+    doc.addImage(imgData, "PNG", xOffset, yOffset, size, size);
+  }
+
   doc.save("mandala.pdf");
 });
