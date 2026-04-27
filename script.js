@@ -3,6 +3,7 @@ let ctx = canvas.getContext("2d");
 let layers;
 const button = document.getElementById("generate");
 const exportButton = document.getElementById("export");
+const exportPDF = document.getElementById("export-pdf");
 
 startingPointX = canvas.width / 2;
 startingPointY = canvas.height / 2;
@@ -32,7 +33,7 @@ function drawMandala(cx, cy) {
   ]; // Capa inicial fija
 
   let radioActual = 30;
-  const radioMaximo = 350;
+  const radioMaximo = 280;
   for (let i = 1; i <= layers; i++) {
     radioActual += Math.floor(Math.random() * 40) + 40; // Incremento aleatorio entre 40 y 80
     if (radioActual > radioMaximo) break; // Detener si el radio supera el máximo permitido
@@ -84,7 +85,7 @@ function drawMandala(cx, cy) {
 button.addEventListener("click", () => {
   clearCanvas(); // Limpiar el canvas antes de dibujar el nuevo mandala
   layers = Math.floor(Math.random() * 3) + 3; // Número aleatorio de capas entre 6 y 12
-  drawMandala(startingPointX, startingPointY);
+  drawMandala(canvas.width / 2, canvas.height / 2);
 });
 
 exportButton.addEventListener("click", () => {
@@ -92,4 +93,23 @@ exportButton.addEventListener("click", () => {
   link.download = "mandala.png";
   link.href = canvas.toDataURL("image/png");
   link.click();
+});
+
+exportPDF.addEventListener("click", () => {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({
+    orientation: "portrait",
+    unit: "in",
+    format: [8.5, 11], // tamaño carta
+  });
+
+  const imgData = canvas.toDataURL("image/png");
+
+  const margin = 0.75;
+  const size = 8.5 - margin * 2;
+  const xOffset = margin;
+  const yOffset = (11 - size) / 2;
+
+  doc.addImage(imgData, "PNG", xOffset, yOffset, size, size);
+  doc.save("mandala.pdf");
 });
