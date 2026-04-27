@@ -25,9 +25,10 @@ function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function drawMandala(cx, cy) {
+function drawMandala(cx, cy, ctx, canvasWidth, canvasHeight) {
   ctx.fillStyle = "white";
-  ctx.fillRect(0, 0, canvas.width, canvas.height); // Fondo blanco para el mandala
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight); // Fondo blanco para el mandala
+  layers = Math.floor(Math.random() * 6) + 6; // Número aleatorio de capas entre 6 y 12
 
   const capas = [
     {
@@ -45,7 +46,7 @@ function drawMandala(cx, cy) {
     capas.push({
       radio: radioActual,
       repeticiones: Math.floor(Math.random() * 4) * 2 + 6, // 6, 8, 10 o 12 repeticiones
-      tension: Math.random() * 0.2 + 0.6, // Tensión aleatoria entre 0.6 y 0.8
+      tension: Math.random() * 0.225 + 0.4, // Tensión aleatoria entre 0.45 y 0.6
     });
   }
 
@@ -53,7 +54,6 @@ function drawMandala(cx, cy) {
 
   for (const capa of capas) {
     const puntos = [];
-
     for (let i = 0; i < capa.repeticiones; i++) {
       const anguloBase = -Math.PI / 2; // Comenzar desde la parte superior
       const angulo = anguloBase + ((2 * Math.PI) / capa.repeticiones) * i;
@@ -65,32 +65,28 @@ function drawMandala(cx, cy) {
     for (let i = 0; i < puntos.length; i++) {
       const actual = puntos[i];
       const siguiente = puntos[(i + 1) % puntos.length];
-      for (let i = 0; i < puntos.length; i++) {
-        const actual = puntos[i];
-        const siguiente = puntos[(i + 1) % puntos.length];
-
-        //punto medio entre actual y siguiente
-        const mx = (actual.x + siguiente.x) / 2;
-        const my = (actual.y + siguiente.y) / 2;
-
-        //punto de control: empuja el medio hacia afuera del centro del mandala
-        const cpx = mx + (mx - cx) * capa.tension;
-        const cpy = my + (my - cy) * capa.tension;
-
-        ctx.beginPath();
-        ctx.moveTo(actual.x, actual.y);
-        ctx.lineWidth = 0.5 + capa.radio / 200; // Grosor basado en el radio de la capa
-        ctx.quadraticCurveTo(cpx, cpy, siguiente.x, siguiente.y);
-        ctx.stroke();
-      }
+      const mx = (actual.x + siguiente.x) / 2;
+      const my = (actual.y + siguiente.y) / 2;
+      const cpx = mx + (mx - cx) * capa.tension;
+      const cpy = my + (my - cy) * capa.tension;
+      ctx.beginPath();
+      ctx.lineWidth = 0.5 + capa.radio / 200;
+      ctx.moveTo(actual.x, actual.y);
+      ctx.quadraticCurveTo(cpx, cpy, siguiente.x, siguiente.y);
+      ctx.stroke();
     }
   }
 }
 
 button.addEventListener("click", () => {
   clearCanvas(); // Limpiar el canvas antes de dibujar el nuevo mandala
-  layers = Math.floor(Math.random() * 6) + 6; // Número aleatorio de capas entre 6 y 12
-  drawMandala(canvas.width / 2, canvas.height / 2);
+  drawMandala(
+    canvas.width / 2,
+    canvas.height / 2,
+    ctx,
+    canvas.width,
+    canvas.height,
+  );
 });
 
 exportButton.addEventListener("click", () => {
@@ -116,17 +112,27 @@ exportPDF.addEventListener("click", () => {
 
   for (let i = 0; i < totalPages; i++) {
     // Reset completo del canvas
-    canvas.width = canvas.width; // esto resetea TODO el estado del canvas
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = "#000000"; // fuerza el trazo a negro puro
-    layers = Math.floor(Math.random() * 6) + 6; // Número aleatorio de capas entre 6 y 12
-    drawMandala(canvas.width / 2, canvas.height / 2);
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = 750;
+    tempCanvas.height = 750;
+    const tempCtx = tempCanvas.getContext("2d");
 
-    const imgData = canvas.toDataURL("image/png");
+    tempCtx.fillStyle = "#ffffff";
+    tempCtx.fillRect(0, 0, 750, 750);
+    tempCtx.strokeStyle = "#000000";
 
+    // Dibuja en el canvas temporal en lugar del canvas principal
+    drawMandala(
+      tempCanvas.width / 2,
+      tempCanvas.height / 2,
+      tempCtx,
+      tempCanvas.width,
+      tempCanvas.height,
+    );
+
+    const imgData = tempCanvas.toDataURL("image/jpeg", 1.0);
     if (i > 0) doc.addPage();
-    doc.addImage(imgData, "PNG", xOffset, yOffset, size, size);
+    doc.addImage(imgData, "JPEG", xOffset, yOffset, size, size);
   }
 
   doc.save("mandala.pdf");
