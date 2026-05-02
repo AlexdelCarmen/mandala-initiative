@@ -103,9 +103,12 @@ function drawCover(cx, cy, ctx, canvasWidth, canvasHeight) {
 
   capas.sort((a, b) => a.radio - b.radio);
 
-  capas.forEach((capa, index) => {
-    const hue = 170 + (index / capas.length) * 30; // 170-200: cyan a turquesa
-    const lightness = 55 + (index / capas.length) * 20; // más claro hacia afuera
+  const capasInvertidas = [...capas].reverse();
+
+  capasInvertidas.forEach((capa, index) => {
+    const invertedIndex = capas.length - 1 - index;
+    const hue = 170 + (invertedIndex / capas.length) * 30; // 170-200: cyan a turquesa
+    const lightness = 55 + (invertedIndex / capas.length) * 20; // más claro hacia afuera
 
     const puntos = [];
     for (let i = 0; i < capa.repeticiones; i++) {
@@ -133,7 +136,7 @@ function drawCover(cx, cy, ctx, canvasWidth, canvasHeight) {
     ctx.fill();
 
     // Trazo blanco encima
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
     ctx.lineWidth = 0.5 + capa.radio / 200;
     ctx.stroke();
   });
