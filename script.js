@@ -4,6 +4,7 @@ let layers;
 const button = document.getElementById("generate");
 const exportButton = document.getElementById("export");
 const exportPDF = document.getElementById("export-pdf");
+const exportCover = document.getElementById("export-cover");
 
 startingPointX = canvas.width / 2;
 startingPointY = canvas.height / 2;
@@ -78,6 +79,66 @@ function drawMandala(cx, cy, ctx, canvasWidth, canvasHeight) {
   }
 }
 
+function drawCover(cx, cy, ctx, canvasWidth, canvasHeight) {
+  // Fondo oscuro
+  ctx.fillStyle = "#0a0a1a";
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  layers = Math.floor(Math.random() * 6) + 6;
+  const capas = [
+    { radio: Math.floor(Math.random() * 15) + 10, repeticiones: 6, tension: 1 },
+  ];
+
+  let radioActual = 30;
+  const radioMaximo = 280;
+  for (let i = 1; i <= layers; i++) {
+    radioActual += Math.floor(Math.random() * 40) + 40;
+    if (radioActual > radioMaximo) break;
+    capas.push({
+      radio: radioActual,
+      repeticiones: Math.floor(Math.random() * 4) * 2 + 6,
+      tension: Math.random() * 0.225 + 0.4,
+    });
+  }
+
+  capas.sort((a, b) => a.radio - b.radio);
+
+  capas.forEach((capa, index) => {
+    const hue = 170 + (index / capas.length) * 30; // 170-200: cyan a turquesa
+    const lightness = 55 + (index / capas.length) * 20; // más claro hacia afuera
+
+    const puntos = [];
+    for (let i = 0; i < capa.repeticiones; i++) {
+      const anguloBase = -Math.PI / 2;
+      const angulo = anguloBase + ((2 * Math.PI) / capa.repeticiones) * i;
+      puntos.push({
+        x: cx + capa.radio * Math.cos(angulo),
+        y: cy + capa.radio * Math.sin(angulo),
+      });
+    }
+
+    // Dibujar el path completo primero para el fill
+    ctx.beginPath();
+    for (let i = 0; i < puntos.length; i++) {
+      const actual = puntos[i];
+      const siguiente = puntos[(i + 1) % puntos.length];
+      const mx = (actual.x + siguiente.x) / 2;
+      const my = (actual.y + siguiente.y) / 2;
+      const cpx = mx + (mx - cx) * capa.tension;
+      const cpy = my + (my - cy) * capa.tension;
+      if (i === 0) ctx.moveTo(actual.x, actual.y);
+      ctx.quadraticCurveTo(cpx, cpy, siguiente.x, siguiente.y);
+    }
+    ctx.fillStyle = `hsl(${hue}, 70%, ${lightness}%)`;
+    ctx.fill();
+
+    // Trazo blanco encima
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+    ctx.lineWidth = 0.5 + capa.radio / 200;
+    ctx.stroke();
+  });
+}
+
 button.addEventListener("click", () => {
   clearCanvas(); // Limpiar el canvas antes de dibujar el nuevo mandala
   drawMandala(
@@ -140,4 +201,20 @@ exportPDF.addEventListener("click", () => {
   }
 
   doc.save("mandala.pdf");
+});
+
+exportCover.addEventListener("click", () => {
+  const tempCanvas = document.createElement("canvas");
+  const SCALE = 3;
+  tempCanvas.width = 750 * SCALE;
+  tempCanvas.height = 750 * SCALE;
+  const tempCtx = tempCanvas.getContext("2d");
+  tempCtx.scale(SCALE, SCALE);
+
+  drawCover(375, 375, tempCtx, 750, 750);
+
+  const link = document.createElement("a");
+  link.download = "mandala_cover.png";
+  link.href = tempCanvas.toDataURL("image/png");
+  link.click();
 });
