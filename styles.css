@@ -135,3 +135,16 @@ button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+.control-group label {
+  font-size: 0.85rem;
+  color: var(--color-text-soft);
+}
+
+.control-group input {
+  width: 100%;
+  padding: 0.4rem;
+  border: 1px solid var(--color-text-soft);
+  border-radius: 4px;
+  font-family: var(--font-body);
+}

@@ -108,26 +108,30 @@ exportPDF.addEventListener("click", () => {
   const size = 8.5 - margin * 2;
   const xOffset = margin;
   const yOffset = (11 - size) / 2;
-  const totalPages = 10;
+  const totalPages =
+    parseInt(document.getElementById("page-count").value) || 10;
 
   for (let i = 0; i < totalPages; i++) {
     // Reset completo del canvas
+    const SCALE = 3;
     const tempCanvas = document.createElement("canvas");
-    tempCanvas.width = 750;
-    tempCanvas.height = 750;
+    tempCanvas.width = 750 * SCALE;
+    tempCanvas.height = 750 * SCALE;
     const tempCtx = tempCanvas.getContext("2d");
 
+    tempCtx.scale(SCALE, SCALE);
+
     tempCtx.fillStyle = "#ffffff";
-    tempCtx.fillRect(0, 0, 750, 750);
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
     tempCtx.strokeStyle = "#000000";
 
     // Dibuja en el canvas temporal en lugar del canvas principal
     drawMandala(
-      tempCanvas.width / 2,
-      tempCanvas.height / 2,
+      tempCanvas.width / 2 / SCALE,
+      tempCanvas.height / 2 / SCALE,
       tempCtx,
-      tempCanvas.width,
-      tempCanvas.height,
+      750,
+      750,
     );
 
     const imgData = tempCanvas.toDataURL("image/jpeg", 1.0);
