@@ -64,6 +64,7 @@ function drawLayer(cx, cy, ctx, capa, scale = 1) {
 
 // ornamento central del mandala, con 8 pétalos alrededor de un círculo central, para darle un punto focal al diseño
 function drawCenterOrnament(cx, cy, ctx) {
+  ctx.lineWidth = 1;
   const petalos = 8;
   const radio = 18;
 
