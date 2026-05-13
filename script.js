@@ -26,6 +26,41 @@ function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
+function drawLayer(cx, cy, ctx, capa, scale = 1) {
+  const puntos = [];
+
+  for (let i = 0; i < capa.repeticiones; i++) {
+    const anguloBase = -Math.PI / 2;
+    const angulo = anguloBase + ((2 * Math.PI) / capa.repeticiones) * i;
+
+    const radio = capa.radio * scale;
+
+    const x = cx + radio * Math.cos(angulo);
+    const y = cy + radio * Math.sin(angulo);
+
+    puntos.push({ x, y });
+  }
+
+  for (let i = 0; i < puntos.length; i++) {
+    const actual = puntos[i];
+    const siguiente = puntos[(i + 1) % puntos.length];
+
+    const mx = (actual.x + siguiente.x) / 2;
+    const my = (actual.y + siguiente.y) / 2;
+
+    const cpx = mx + (mx - cx) * capa.tension;
+    const cpy = my + (my - cy) * capa.tension;
+
+    ctx.beginPath();
+    ctx.lineWidth = 0.5 + capa.radio / 100;
+
+    ctx.moveTo(actual.x, actual.y);
+    ctx.quadraticCurveTo(cpx, cpy, siguiente.x, siguiente.y);
+
+    ctx.stroke();
+  }
+}
+
 function drawMandala(cx, cy, ctx, canvasWidth, canvasHeight) {
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvasWidth, canvasHeight); // Fondo blanco para el mandala
@@ -53,30 +88,13 @@ function drawMandala(cx, cy, ctx, canvasWidth, canvasHeight) {
 
   capas.sort((a, b) => a.radio - b.radio);
 
-  for (const capa of capas) {
-    const puntos = [];
-    for (let i = 0; i < capa.repeticiones; i++) {
-      const anguloBase = -Math.PI / 2; // Comenzar desde la parte superior
-      const angulo = anguloBase + ((2 * Math.PI) / capa.repeticiones) * i;
-      const x = cx + capa.radio * Math.cos(angulo);
-      const y = cy + capa.radio * Math.sin(angulo);
-      puntos.push({ x, y });
-    }
+for (const capa of capas) {
+  drawLayer(cx, cy, ctx, capa, 1);
 
-    for (let i = 0; i < puntos.length; i++) {
-      const actual = puntos[i];
-      const siguiente = puntos[(i + 1) % puntos.length];
-      const mx = (actual.x + siguiente.x) / 2;
-      const my = (actual.y + siguiente.y) / 2;
-      const cpx = mx + (mx - cx) * capa.tension;
-      const cpy = my + (my - cy) * capa.tension;
-      ctx.beginPath();
-      ctx.lineWidth = 0.5 + capa.radio / 200;
-      ctx.moveTo(actual.x, actual.y);
-      ctx.quadraticCurveTo(cpx, cpy, siguiente.x, siguiente.y);
-      ctx.stroke();
-    }
+  if (capa.radio > 40) {
+    drawLayer(cx, cy, ctx, capa, 0.82);
   }
+}
 }
 
 function drawCover(cx, cy, ctx, canvasWidth, canvasHeight) {
