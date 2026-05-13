@@ -29,7 +29,7 @@ function clearCanvas() {
 // generador de capas del mandala, cada capa es un círculo con puntos equidistantes, luego se conectan con curvas cuadráticas para formar el diseño del mandala
 function drawLayer(cx, cy, ctx, capa, scale = 1) {
   const puntos = [];
-  const useOrnaments = capa.radio > 60 && Math.random() > 0.35;
+  const useOrnaments = capa.radio > 120 && Math.random() > 0.35;
   for (let i = 0; i < capa.repeticiones; i++) {
     const anguloBase = -Math.PI / 2;
     const angulo = anguloBase + ((2 * Math.PI) / capa.repeticiones) * i;
@@ -48,9 +48,19 @@ function drawLayer(cx, cy, ctx, capa, scale = 1) {
 
     const mx = (actual.x + siguiente.x) / 2;
     const my = (actual.y + siguiente.y) / 2;
+    const dx = mx - cx;
+    const dy = my - cy;
+
+    const length = Math.sqrt(dx * dx + dy * dy);
+
+    const ornamentOffset = 10;
+
+    const ox = mx + (dx / length) * ornamentOffset;
+    const oy = my + (dy / length) * ornamentOffset;
+
     if (useOrnaments) {
       ctx.beginPath();
-      ctx.arc(mx, my, 3 + capa.radio / 80, 0, Math.PI * 2);
+      ctx.arc(ox, oy, 3 + capa.radio / 80, 0, Math.PI * 2);
       ctx.stroke();
     }
 
