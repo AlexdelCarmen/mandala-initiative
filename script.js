@@ -26,6 +26,7 @@ function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
+// generador de capas del mandala, cada capa es un círculo con puntos equidistantes, luego se conectan con curvas cuadráticas para formar el diseño del mandala
 function drawLayer(cx, cy, ctx, capa, scale = 1) {
   const puntos = [];
 
@@ -61,19 +62,33 @@ function drawLayer(cx, cy, ctx, capa, scale = 1) {
   }
 }
 
+// ornamento central del mandala, con 8 pétalos alrededor de un círculo central, para darle un punto focal al diseño
+function drawCenterOrnament(cx, cy, ctx) {
+  const petalos = 8;
+  const radio = 18;
+
+  for (let i = 0; i < petalos; i++) {
+    const angulo = ((Math.PI * 2) / petalos) * i;
+
+    const x = cx + Math.cos(angulo) * radio;
+    const y = cy + Math.sin(angulo) * radio;
+
+    ctx.beginPath();
+    ctx.arc(x, y, 8, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+  ctx.stroke();
+}
+
 function drawMandala(cx, cy, ctx, canvasWidth, canvasHeight) {
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, canvasWidth, canvasHeight); // Fondo blanco para el mandala
   layers = Math.floor(Math.random() * 6) + 6; // Número aleatorio de capas entre 6 y 12
 
-  const capas = [
-    {
-      radio: Math.floor(Math.random() * 15) + 10,
-      repeticiones: 6,
-      tension: 1,
-    },
-  ]; // Capa inicial fija
-
+  const capas = [];
   let radioActual = 30;
   const radioMaximo = 280;
   for (let i = 1; i <= layers; i++) {
@@ -81,7 +96,7 @@ function drawMandala(cx, cy, ctx, canvasWidth, canvasHeight) {
     const spacing = 45 + repeticionesBase * 2;
     radioActual += spacing + Math.random() * 10;
     if (radioActual > radioMaximo) break; // Detener si el radio supera el máximo permitido
-    
+
     capas.push({
       radio: radioActual,
       repeticiones: repeticionesBase + (Math.random() > 0.7 ? 2 : 0), // variaciones ligeras en repeticiones
@@ -91,13 +106,14 @@ function drawMandala(cx, cy, ctx, canvasWidth, canvasHeight) {
 
   capas.sort((a, b) => a.radio - b.radio);
 
-for (const capa of capas) {
-  drawLayer(cx, cy, ctx, capa, 1);
+  for (const capa of capas) {
+    drawLayer(cx, cy, ctx, capa, 1);
 
-  if (capa.radio > 40) {
-    drawLayer(cx, cy, ctx, capa, 0.92);
+    if (capa.radio > 40) {
+      drawLayer(cx, cy, ctx, capa, 0.92);
+    }
   }
-}
+  drawCenterOrnament(cx, cy, ctx);
 }
 
 function drawCover(cx, cy, ctx, canvasWidth, canvasHeight) {
