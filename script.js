@@ -52,7 +52,7 @@ function drawLayer(cx, cy, ctx, capa, scale = 1) {
     const cpy = my + (my - cy) * capa.tension;
 
     ctx.beginPath();
-    ctx.lineWidth = 0.5 + capa.radio / 100;
+    ctx.lineWidth = 0.5 + capa.radio / 150;
 
     ctx.moveTo(actual.x, actual.y);
     ctx.quadraticCurveTo(cpx, cpy, siguiente.x, siguiente.y);
@@ -77,12 +77,15 @@ function drawMandala(cx, cy, ctx, canvasWidth, canvasHeight) {
   let radioActual = 30;
   const radioMaximo = 280;
   for (let i = 1; i <= layers; i++) {
-    radioActual += Math.floor(Math.random() * 40) + 40; // Incremento aleatorio entre 40 y 80
+    const repeticionesBase = [6, 8, 10, 12][Math.floor(Math.random() * 4)];
+    const spacing = 45 + repeticionesBase * 2;
+    radioActual += spacing + Math.random() * 10;
     if (radioActual > radioMaximo) break; // Detener si el radio supera el máximo permitido
+    
     capas.push({
       radio: radioActual,
-      repeticiones: Math.floor(Math.random() * 4) * 2 + 6, // 6, 8, 10 o 12 repeticiones
-      tension: Math.random() * 0.225 + 0.4, // Tensión aleatoria entre 0.45 y 0.6
+      repeticiones: repeticionesBase + (Math.random() > 0.7 ? 2 : 0), // variaciones ligeras en repeticiones
+      tension: Math.random() * 0.12 + 0.42, // Tensión aleatoria entre 0.42 y 0.58
     });
   }
 
@@ -92,7 +95,7 @@ for (const capa of capas) {
   drawLayer(cx, cy, ctx, capa, 1);
 
   if (capa.radio > 40) {
-    drawLayer(cx, cy, ctx, capa, 0.82);
+    drawLayer(cx, cy, ctx, capa, 0.92);
   }
 }
 }
@@ -115,7 +118,7 @@ function drawCover(cx, cy, ctx, canvasWidth, canvasHeight) {
     capas.push({
       radio: radioActual,
       repeticiones: Math.floor(Math.random() * 4) * 2 + 6,
-      tension: Math.random() * 0.225 + 0.4,
+      tension: Math.random() * 0.12 + 0.42,
     });
   }
 
@@ -155,7 +158,7 @@ function drawCover(cx, cy, ctx, canvasWidth, canvasHeight) {
 
     // Trazo blanco encima
     ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
-    ctx.lineWidth = 0.5 + capa.radio / 200;
+    ctx.lineWidth = 0.5 + capa.radio / 150;
     ctx.stroke();
   });
 }
