@@ -133,66 +133,158 @@ function drawMandala(cx, cy, ctx, canvasWidth, canvasHeight) {
 }
 
 function drawCover(cx, cy, ctx, canvasWidth, canvasHeight) {
-  // Fondo oscuro
-  ctx.fillStyle = "#0a0a1a";
+  // ===== BACKGROUND =====
+  const bgGradient = ctx.createRadialGradient(
+    cx,
+    cy,
+    50,
+    cx,
+    cy,
+    canvasWidth * 0.7,
+  );
+
+  bgGradient.addColorStop(0, "#101c2c");
+  bgGradient.addColorStop(1, "#02030a");
+
+  ctx.fillStyle = bgGradient;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  layers = Math.floor(Math.random() * 6) + 6;
+  // ===== GENERATE LAYERS =====
+  layers = Math.floor(Math.random() * 4) + 7;
+
   const capas = [
-    { radio: Math.floor(Math.random() * 15) + 10, repeticiones: 6, tension: 1 },
+    {
+      radio: 20,
+      repeticiones: 8,
+      tension: 0.9,
+    },
   ];
 
-  let radioActual = 30;
-  const radioMaximo = 280;
+  let radioActual = 45;
+  const radioMaximo = 240;
+
   for (let i = 1; i <= layers; i++) {
-    radioActual += Math.floor(Math.random() * 40) + 40;
+    radioActual += Math.floor(Math.random() * 25) + 25;
+
     if (radioActual > radioMaximo) break;
+
     capas.push({
       radio: radioActual,
-      repeticiones: Math.floor(Math.random() * 4) * 2 + 6,
-      tension: Math.random() * 0.12 + 0.42,
+      repeticiones: Math.floor(Math.random() * 3) * 2 + 6,
+      tension: Math.random() * 0.15 + 0.45,
     });
   }
 
   capas.sort((a, b) => a.radio - b.radio);
 
-  const capasInvertidas = [...capas].reverse();
-
-  capasInvertidas.forEach((capa, index) => {
-    const invertedIndex = capas.length - 1 - index;
-    const hue = 170 + (invertedIndex / capas.length) * 30; // 170-200: cyan a turquesa
-    const lightness = 55 + (invertedIndex / capas.length) * 20; // más claro hacia afuera
-
+  // ===== DRAW =====
+  [...capas].reverse().forEach((capa, index) => {
     const puntos = [];
+
     for (let i = 0; i < capa.repeticiones; i++) {
-      const anguloBase = -Math.PI / 2;
-      const angulo = anguloBase + ((2 * Math.PI) / capa.repeticiones) * i;
+      const angulo = -Math.PI / 2 + ((2 * Math.PI) / capa.repeticiones) * i;
+
       puntos.push({
         x: cx + capa.radio * Math.cos(angulo),
         y: cy + capa.radio * Math.sin(angulo),
       });
     }
 
-    // Dibujar el path completo primero para el fill
+    // ===== COLOR =====
+    const t = 1 - index / capas.length;
+
+    const hue = 175 + t * 20;
+    const lightness = 70 - t * 18;
+
     ctx.beginPath();
+
     for (let i = 0; i < puntos.length; i++) {
       const actual = puntos[i];
       const siguiente = puntos[(i + 1) % puntos.length];
+
       const mx = (actual.x + siguiente.x) / 2;
       const my = (actual.y + siguiente.y) / 2;
+
       const cpx = mx + (mx - cx) * capa.tension;
       const cpy = my + (my - cy) * capa.tension;
-      if (i === 0) ctx.moveTo(actual.x, actual.y);
+
+      if (i === 0) {
+        ctx.moveTo(actual.x, actual.y);
+      }
+
       ctx.quadraticCurveTo(cpx, cpy, siguiente.x, siguiente.y);
     }
-    ctx.fillStyle = `hsl(${hue}, 70%, ${lightness}%)`;
+
+    // ===== FILL =====
+    ctx.fillStyle = `hsl(${hue}, 55%, ${lightness}%)`;
+
+    // soft glow
+    ctx.shadowColor = `hsla(${hue}, 80%, 70%, 0.15)`;
+    ctx.shadowBlur = 15;
+
     ctx.fill();
 
-    // Trazo blanco encima
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
-    ctx.lineWidth = 0.5 + capa.radio / 150;
+    // ===== MAIN STROKE =====
+    ctx.strokeStyle = "rgba(255,255,255,0.85)";
+    ctx.lineWidth = 1.4;
+
     ctx.stroke();
+
+    // ===== ECHO LINE =====
+    if (index % 2 === 0 && capa.radio > 50) {
+      ctx.beginPath();
+
+      for (let i = 0; i < puntos.length; i++) {
+        const actual = puntos[i];
+        const siguiente = puntos[(i + 1) % puntos.length];
+
+        const mx = (actual.x + siguiente.x) / 2;
+        const my = (actual.y + siguiente.y) / 2;
+
+        const cpx = mx + (mx - cx) * (capa.tension * 0.88);
+
+        const cpy = my + (my - cy) * (capa.tension * 0.88);
+
+        const scale = 0.92;
+
+        const ax = cx + (actual.x - cx) * scale;
+        const ay = cy + (actual.y - cy) * scale;
+
+        const sx = cx + (siguiente.x - cx) * scale;
+
+        const sy = cy + (siguiente.y - cy) * scale;
+
+        if (i === 0) {
+          ctx.moveTo(ax, ay);
+        }
+
+        ctx.quadraticCurveTo(cpx, cpy, sx, sy);
+      }
+
+      ctx.strokeStyle = "rgba(255,255,255,0.22)";
+      ctx.lineWidth = 0.8;
+
+      ctx.stroke();
+    }
   });
+
+  // ===== CENTER ORNAMENT =====
+  ctx.beginPath();
+
+  ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+
+  ctx.fillStyle = "rgba(255,255,255,0.9)";
+  ctx.fill();
+
+  ctx.beginPath();
+
+  ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+
+  ctx.fillStyle = "#7fffd4";
+  ctx.fill();
+
+  // reset shadow
+  ctx.shadowBlur = 0;
 }
 
 button.addEventListener("click", () => {
