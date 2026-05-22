@@ -345,7 +345,17 @@ exportPDF.addEventListener("click", () => {
 
     const imgData = tempCanvas.toDataURL("image/jpeg", 1.0);
     if (i > 0) doc.addPage();
+    // ===== MANDALA PAGE =====
+    doc.setFillColor(255, 255, 255);
+    doc.rect(0, 0, 8.5, 11, "F");
+
     doc.addImage(imgData, "JPEG", xOffset, yOffset, size, size);
+
+    // ===== DARK PAGE =====
+    doc.addPage();
+
+    doc.setFillColor(8, 12, 28); // navy oscuro elegante
+    doc.rect(0, 0, 8.5, 11, "F");
   }
 
   doc.save("mandala.pdf");
