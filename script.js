@@ -106,7 +106,7 @@ function drawMandala(cx, cy, ctx, canvasWidth, canvasHeight) {
 
   const capas = [];
   let radioActual = 30;
-  const radioMaximo = 280;
+  const radioMaximo = 240;
   for (let i = 1; i <= layers; i++) {
     const repeticionesBase = [6, 8, 10, 12][Math.floor(Math.random() * 4)];
     const spacing = 45 + repeticionesBase * 2;
@@ -313,7 +313,7 @@ exportPDF.addEventListener("click", () => {
     format: [8.5, 11], // tamaño carta
   });
 
-  const margin = 0.75;
+  const margin = 0.9; // margen de 0.9 pulgadas para asegurar que el mandala no quede demasiado cerca del borde del papel
   const size = 8.5 - margin * 2;
   const xOffset = margin;
   const yOffset = (11 - size) / 2;
